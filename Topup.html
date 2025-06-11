@@ -1,0 +1,289 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RaflyStore - Top Up Game</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom, #e0e7ff, #fef9ff);
+      margin: 0;
+      padding: 0;
+      color: #222;
+    }
+    header {
+      background: #4f46e5;
+      color: white;
+      padding: 20px 0;
+      text-align: center;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.5em;
+    }
+    header p {
+      margin: 5px 0 0;
+    }
+    .container {
+      max-width: 1100px;
+      margin: 30px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 16px;
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    .tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-bottom: 25px;
+    }
+    .tab {
+      padding: 10px 18px;
+      border-radius: 999px;
+      background: #e0e7ff;
+      cursor: pointer;
+      font-weight: 600;
+      transition: 0.3s;
+    }
+    .tab.active {
+      background: #4f46e5;
+      color: white;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 20px;
+    }
+    .card {
+      background: #f3f4f6;
+      padding: 20px;
+      text-align: center;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 2px solid transparent;
+      transition: 0.3s;
+    }
+    .card:hover {
+      background: #e0e7ff;
+    }
+    .card.active {
+      border-color: #4f46e5;
+      background: #e0e7ff;
+    }
+    .input-group {
+      margin-top: 25px;
+    }
+    label {
+      display: block;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input, select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    button {
+      background: #4f46e5;
+      color: white;
+      padding: 14px;
+      font-size: 16px;
+      border: none;
+      border-radius: 10px;
+      width: 100%;
+      cursor: pointer;
+      font-weight: bold;
+    }
+    button:hover {
+      background: #3730a3;
+    }
+    .history-item {
+      background: #f9fafb;
+      border: 1px solid #ddd;
+      padding: 12px;
+      border-radius: 10px;
+      margin-top: 10px;
+    }
+    footer {
+      text-align: center;
+      padding: 20px;
+      font-size: 0.9em;
+      color: #777;
+    }
+    .note {
+      font-size: 0.85em;
+      color: #555;
+      margin-bottom: 15px;
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>RaflyStore</h1>
+    <p>Top Up Game Aman, Murah, Instan & Terpercaya</p>
+  </header>  <div class="container">
+    <div class="tabs" id="gameTabs"></div>
+    <div class="cards" id="optionCards"></div><div class="input-group" id="inputGroupUserID">
+  <label for="userID">User ID Game:</label>
+  <input type="text" id="userID" placeholder="Masukkan ID game Anda">
+</div>
+
+<div class="input-group" id="inputGroupZoneID" style="display: none;">
+  <label for="zoneID">Zone ID (khusus Mobile Legends):</label>
+  <input type="text" id="zoneID" placeholder="Contoh: 1234">
+</div>
+
+<div class="input-group">
+  <label for="paymentMethod">Metode Pembayaran (E-Wallet):</label>
+  <select id="paymentMethod">
+    <option value="">-- Pilih E-Wallet --</option>
+    <option value="Dana">Dana</option>
+    <option value="OVO">OVO</option>
+    <option value="GoPay">GoPay</option>
+    <option value="ShopeePay">ShopeePay</option>
+  </select>
+</div>
+
+<div class="note">📌 Pastikan data yang Anda masukkan benar. Admin akan memproses pesanan sesuai data yang dikirimkan.</div>
+<button onclick="submitOrder()">Kirim Pesanan ke WhatsApp</button>
+
+<h2>Riwayat Pesanan</h2>
+<div id="history"></div>
+
+  </div>  <footer>
+    &copy; 2025 RaflyStore | <a href="https://wa.me/6285881291680">Hubungi Admin di WhatsApp</a>
+  </footer>  <script>
+    const games = [
+      { id: "ml", name: "Mobile Legends", options: [
+        { id: "5", label: "5 Diamonds", price: 1500 },
+        { id: "50", label: "50 Diamonds", price: 15000 },
+        { id: "100", label: "100 Diamonds", price: 29000 },
+      ] },
+      { id: "ff", name: "Free Fire", options: [
+        { id: "12", label: "12 Diamonds", price: 2000 },
+        { id: "70", label: "70 Diamonds", price: 8000 },
+        { id: "140", label: "140 Diamonds", price: 15000 },
+      ] },
+      { id: "pubgm", name: "PUBG Mobile", options: [
+        { id: "60", label: "60 UC", price: 12000 },
+        { id: "325", label: "325 UC", price: 65000 },
+      ] },
+      { id: "valo", name: "Valorant", options: [
+        { id: "125", label: "125 VP", price: 12000 },
+        { id: "420", label: "420 VP", price: 40000 },
+      ] },
+      { id: "genshin", name: "Genshin Impact", options: [
+        { id: "60", label: "60 Genesis Crystals", price: 16000 },
+        { id: "300", label: "300 Genesis Crystals", price: 79000 },
+      ] },
+      { id: "codm", name: "Call of Duty Mobile", options: [
+        { id: "80", label: "80 CP", price: 10000 },
+        { id: "420", label: "420 CP", price: 50000 },
+      ] },
+      { id: "hsr", name: "Honkai Star Rail", options: [
+        { id: "60", label: "60 Oneiric Shard", price: 15000 },
+        { id: "300", label: "300 Oneiric Shard", price: 75000 },
+      ] },
+      { id: "aov", name: "Arena of Valor", options: [
+        { id: "40", label: "40 Voucher", price: 10000 },
+        { id: "140", label: "140 Voucher", price: 28000 },
+      ] },
+    ];
+
+    let selectedGame = games[0];
+    let selectedOption = null;
+    const history = [];
+
+    const gameTabs = document.getElementById('gameTabs');
+    const optionCards = document.getElementById('optionCards');
+    const historyDiv = document.getElementById('history');
+
+    function renderGames() {
+      gameTabs.innerHTML = '';
+      games.forEach(game => {
+        const tab = document.createElement('div');
+        tab.textContent = game.name;
+        tab.className = 'tab' + (game.id === selectedGame.id ? ' active' : '');
+        tab.onclick = () => {
+          selectedGame = game;
+          selectedOption = null;
+          renderGames();
+          renderOptions();
+          toggleZoneInput();
+        };
+        gameTabs.appendChild(tab);
+      });
+    }
+
+    function renderOptions() {
+      optionCards.innerHTML = '';
+      selectedGame.options.forEach(opt => {
+        const card = document.createElement('div');
+        card.className = 'card' + (selectedOption?.id === opt.id ? ' active' : '');
+        card.innerHTML = `<strong>${opt.label}</strong><br>Rp${opt.price.toLocaleString()}`;
+        card.onclick = () => {
+          selectedOption = opt;
+          renderOptions();
+        };
+        optionCards.appendChild(card);
+      });
+    }
+
+    function toggleZoneInput() {
+      const zoneField = document.getElementById('inputGroupZoneID');
+      if (selectedGame.id === 'ml') {
+        zoneField.style.display = 'block';
+      } else {
+        zoneField.style.display = 'none';
+      }
+    }
+
+    function submitOrder() {
+      const userID = document.getElementById('userID').value.trim();
+      const zoneID = document.getElementById('zoneID').value.trim();
+      const paymentMethod = document.getElementById('paymentMethod').value;
+
+      if (!userID || !selectedOption || !paymentMethod || (selectedGame.id === 'ml' && !zoneID)) {
+        alert("Mohon lengkapi semua data sebelum mengirim pesanan.");
+        return;
+      }
+
+      const fullID = selectedGame.id === 'ml' ? `${userID} (${zoneID})` : userID;
+
+      const message = `Halo Admin, saya ingin top up:\n\nGame: ${selectedGame.name}\nUser ID: ${fullID}\nPaket: ${selectedOption.label}\nHarga: Rp${selectedOption.price.toLocaleString()}\nPembayaran via: ${paymentMethod}`;
+      const waURL = `https://wa.me/6285881291680?text=${encodeURIComponent(message)}`;
+      window.open(waURL, '_blank');
+
+      history.unshift({ game: selectedGame.name, userID: fullID, paket: selectedOption.label, harga: selectedOption.price, payment: paymentMethod, time: new Date().toLocaleString() });
+      renderHistory();
+    }
+
+    function renderHistory() {
+      historyDiv.innerHTML = history.map(item => `
+        <div class="history-item">
+          <strong>Game:</strong> ${item.game}<br>
+          <strong>User ID:</strong> ${item.userID}<br>
+          <strong>Paket:</strong> ${item.paket}<br>
+          <strong>Harga:</strong> Rp${item.harga.toLocaleString()}<br>
+          <strong>Via:</strong> ${item.payment}<br>
+          <em style="font-size:12px;color:#666">${item.time}</em>
+        </div>
+      `).join('');
+    }
+
+    renderGames();
+    renderOptions();
+    toggleZoneInput();
+  </script></body>
+</html>
